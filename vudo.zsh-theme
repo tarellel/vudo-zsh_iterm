@@ -1,7 +1,18 @@
-# Console colors: Black, Red, Green, Yellow, Blue, Purple, Cyan, and White
+# colors and formatting: http://misc.flogisoft.com/bash/tip_colors_and_formatting
+# http://unix.stackexchange.com/questions/124407/what-color-codes-can-i-use-in-my-ps1-prompt
+# black red green yellow blue magenta cyan white
+# https://gabri.me/blog/custom-colors-in-your-zsh-prompt
+# http://unix.stackexchange.com/questions/32273/16-colors-in-zshell
+# https://wiki.archlinux.org/index.php/zsh#Colors
+# zsh variables - http://zsh.sourceforge.net/Doc/Release/Prompt-Expansion.html
+# color table - https://en.wikipedia.org/wiki/ANSI_escape_code#Colors
+# https://www-s.acm.illinois.edu/workshops/zsh/prompt/escapes.html
+# https://gabri.me/blog/custom-colors-in-your-zsh-prompt
+# Good colors:
+#   http://dobsondev.com/2014/02/21/customizing-your-terminal/
+#   http://code.tutsplus.com/tutorials/how-to-customize-the-command-prompt--net-20586
 
-# shows you full spectrum of $FG colors available, with its color_code
-# spectrum_ls
+# spectrum_ls => shows you full color spectrum
 
 ##### Current directory > pwd
 local current_dir='%{$FG[154]% %~%{$reset_color%}'
@@ -13,9 +24,12 @@ local git_info='$(git_prompt_info)'
 # Get ruby env and version
 # To build ruby prompt
 ####################
-if [[ $(rbenv_prompt_info) ]]; then
+# the rbenv_prompt_info line should be used if you are using the rbenv oh-my-zsh plugin
+#if [[ $(rbenv_prompt_info) ]]; then
+if [[ $(which rbenv) ]]; then
   # if rbenv-ruby is being used out rbenv:(ruby_version)
-  RUBY_PROMPT_="%{$FG[141]rbenv:%}\$( _redder \$(ruby_prompt_info))"
+  rubyversion_=`ruby -e 'print "#{ RUBY_VERSION }p#{ RUBY_PATCHLEVEL }"'`
+  RUBY_PROMPT_="%{$FG[141]rbenv:%}\$( _redder \($rubyversion_\))"
 elif [ -e ~/.rvm/bin/rvm-prompt ] && [ rvm_prompt_info ]; then
   # -> if rvm is installed, output rvm:(ruby_version)
   RUBY_PROMPT_="%{$FG[141]rvm:%}\$( _redder \$(ruby_prompt_info))"
@@ -70,8 +84,6 @@ local TRAILING_CARET_="$(_whiteType '»')"
 local TIMESTAMP_="%{$fg[magenta]%}%D{[%I:%M%p]}%{$reset_color%}"
 
 
-# 1st line - Distingushes between a failed and accepted previous command
-# from https://gist.github.com/smileart/3750104
 PROMPT="%(?.%{%F{green}%}✔.%{%F{red}%}✘)%{%F{yellow}%} %{%F{black}%}""
 
 $USER_PROMPT_ $DIR_PROMPT_ $RUBY_PROMPT_ $TRAILING_CARET_ \$(gitStatus)
@@ -79,13 +91,27 @@ $USER_PROMPT_ $DIR_PROMPT_ $RUBY_PROMPT_ $TRAILING_CARET_ \$(gitStatus)
 PS2=$'%{$fg[cyan]%}»%{$reset_color%} '  # Prompt when continued etc ie: \
 PS3=$' [>'     # Prompt for input/choice
 
-# right prompt / Timestamp
+# Distingush between a failed and accepted previous command
+# from https://gist.github.com/smileart/3750104
+# %(?.%{%F{green}%}✔.%{%F{red}%}✘)%{%F{yellow}%}
+
+#PROMPT="
+#$USER_PROMPT_ $DIR_PROMPT_ $RUBY_PROMPT_ $(git_prompt_ahead) $TRAILING_CARET_ \$(gitStatus)
+#%{$FG[075]⇒%}%{$reset_color%} "
+#PROMPT='
+#%{$fg[magenta]%}%n%{$reset_color%} at %{$fg[yellow]%}%{$reset_color%} in %{$\
+#fg_bold[green]%}${PWD/#$HOME/~}%{$reset_color%}$(git_prompt_info)\
+#%(?,,%{${fg_bold[blue]}%}[%?]%{$reset_color%} )$ '
+
+
+# right prompt
 if type "virtualenv_prompt_info" > /dev/null
 then
   RPROMPT='$(virtualenv_prompt_info)$TIMESTAMP_'
   #RPROMPT='%{$GREEN_BOLD%}%{$RESET_COLOR%}'
 else
   RPROMT='$TIMESTAMP_'
+  #RPROMPT='${return_status}$(git_time_since_commit)$(git_prompt_status)%{$reset_color%}'
 fi
 
 
@@ -111,3 +137,13 @@ ZSH_THEME_GIT_PROMPT_UNTRACKED="%{$FG[043]%}?"
 export LSCOLORS="exfxcxdxbxegedabagacad"
 export LS_COLORS='di=34;40:ln=35;40:so=32;40:pi=33;40:ex=31;40:bd=34;46:cd=34;43:su=0;41:sg=0;46:tw=0;42:ow=0;43:'
 export GREP_COLOR='1;33'
+
+
+### Good
+# unicode - http://unicode-table.com/en/
+# https://github.com/halfo/lambda-mod-zsh-theme
+#   https://github.com/halfo/lambda-mod-zsh-theme/blob/master/lambda-mod.zsh-theme
+#
+# RPROMPT -
+#   https://github.com/robbyrussell/oh-my-zsh/blob/master/themes/smt.zsh-theme
+#   https://github.com/halfo/lambda-mod-zsh-theme/blob/master/lambda-mod.zsh-theme
